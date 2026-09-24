@@ -1,0 +1,8 @@
+.venv
+__pycache__
+*.pyc
+.git
+.gitignore
+README.md
+data/chroma
+create_corpus.py
