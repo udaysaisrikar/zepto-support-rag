@@ -214,10 +214,61 @@ I can only answer questions about Zepto policies right now.
 
 ---
 
-# API
+# Start locally
 
-## Start locally
+## Project Structure
 
+```text
+support_assistant/
+│
+├── app/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── models.py
+│   ├── embeddings.py
+│   ├── ingestion.py
+│   ├── retrieval.py
+│   ├── prompts.py
+│   ├── graph.py
+│   └── main.py
+│
+├── docs/
+│   ├── doc_01.txt
+│   ├── doc_02.txt
+│   ├── doc_03.txt
+│   ├── doc_04.txt
+│   ├── doc_05.txt
+│   ├── doc_06.txt
+│   ├── doc_07.txt
+│   └── doc_08.txt
+│
+├── data/
+│   └── chroma/
+│
+├── requirements.txt
+├── Dockerfile
+├── .dockerignore
+└── README.md
+```
+
+---
+
+# File Responsibilities
+
+| File            | Responsibility                                     |
+| --------------- | -------------------------------------------------- |
+| `config.py`     | Paths, model name, Chroma collection and mock mode |
+| `models.py`     | Graph state and API schemas                        |
+| `embeddings.py` | Cached embedding model                             |
+| `ingestion.py`  | Document loading and Chroma indexing               |
+| `retrieval.py`  | Semantic top-3 retrieval                           |
+| `prompts.py`    | RAG prompt template                                |
+| `graph.py`      | LangGraph routing and generation                   |
+| `main.py`       | FastAPI application and `/ask` endpoint            |
+
+---
+
+## Run it!
 Create and activate a virtual environment:
 
 ```powershell
@@ -268,7 +319,7 @@ Example:
 ---
 
 ## Ask a Question
-
+(We ca use FastAPI SwaggerUI)
 ```http
 POST /ask
 Content-Type: application/json
@@ -317,58 +368,6 @@ Response:
   "confidence": 1.0
 }
 ```
-
----
-
-# Project Structure
-
-```text
-support_assistant/
-│
-├── app/
-│   ├── __init__.py
-│   ├── config.py
-│   ├── models.py
-│   ├── embeddings.py
-│   ├── ingestion.py
-│   ├── retrieval.py
-│   ├── prompts.py
-│   ├── graph.py
-│   └── main.py
-│
-├── docs/
-│   ├── doc_01.txt
-│   ├── doc_02.txt
-│   ├── doc_03.txt
-│   ├── doc_04.txt
-│   ├── doc_05.txt
-│   ├── doc_06.txt
-│   ├── doc_07.txt
-│   └── doc_08.txt
-│
-├── data/
-│   └── chroma/
-│
-├── requirements.txt
-├── Dockerfile
-├── .dockerignore
-└── README.md
-```
-
----
-
-# File Responsibilities
-
-| File            | Responsibility                                     |
-| --------------- | -------------------------------------------------- |
-| `config.py`     | Paths, model name, Chroma collection and mock mode |
-| `models.py`     | Graph state and API schemas                        |
-| `embeddings.py` | Cached embedding model                             |
-| `ingestion.py`  | Document loading and Chroma indexing               |
-| `retrieval.py`  | Semantic top-3 retrieval                           |
-| `prompts.py`    | RAG prompt template                                |
-| `graph.py`      | LangGraph routing and generation                   |
-| `main.py`       | FastAPI application and `/ask` endpoint            |
 
 ---
 
@@ -456,8 +455,6 @@ Invoke-RestMethod `
   -Body $body | ConvertTo-Json
 ```
 
----
-
 # Future Extension Points
 
 The baseline is intentionally simple while keeping clear boundaries for future phases.
@@ -468,24 +465,19 @@ Possible extensions include:
 2. Streaming responses
 3. More sophisticated intent classification
 4. Better document chunking
-5. Metadata filtering
-6. Conversation memory
-7. Evaluation datasets
-8. Retrieval quality metrics
-9. Authentication and rate limiting
-10. Production observability
-11. Feedback-driven retrieval improvement
-12. Additional policy documents
+5. Conversation memory
+6. Retrieval quality metrics
+7. Authentication and rate limiting
+8. Feedback-driven retrieval improvement
+9. Additional policy documents
 
 These extensions can be added without changing the basic FastAPI → LangGraph → Retrieval architecture.
 
-````
-
 ---
 
-# 3. Final Docker rebuild
+### Final Docker rebuild
 
-After changing `config.py` and `graph.py`:
+After changing `config.py` and `graph.py` (incase of future extension/ any changes):
 
 ```powershell
 docker rm -f zepto-support
@@ -521,27 +513,4 @@ Invoke-RestMethod `
   -Body $body | ConvertTo-Json
 ```
 
-### Final expected checklist
-
-```text
-[✓] 8 policy documents
-[✓] all-MiniLM-L6-v2
-[✓] ChromaDB
-[✓] cosine similarity
-[✓] top-3 retrieval
-[✓] LangGraph StateGraph
-[✓] classify_intent
-[✓] retrieve_and_answer
-[✓] direct_answer
-[✓] conditional routing
-[✓] prompt template
-[✓] mock LLM
-[✓] Pydantic response
-[✓] FastAPI /ask
-[✓] Docker
-[✓] README
-[✓] policy query tested
-[✓] general query tested
-```
-
-**At this point, don't add extra features.** The right move is to lock the baseline, rebuild once, run those final three tests, and submit. 🚀
+---
